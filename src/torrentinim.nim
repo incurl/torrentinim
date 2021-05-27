@@ -2,6 +2,7 @@ import os
 import json
 import prologue
 import strutils
+import parsecfg
 
 import "database"
 import "./helpers/datetime"
@@ -22,15 +23,26 @@ when isMainModule:
   if (initRequested()):
     discard initDatabase()
 
-  asyncCheck eztv.startCrawl()
-  asyncCheck leetx.startCrawl()
-  asyncCheck nyaa.startCrawl()
-  asyncCheck nyaa_pantsu.startCrawl()
-  asyncCheck nyaa_sukebei.startCrawl()
-  asyncCheck yts.startCrawl()
-  asyncCheck torrentdownloads.startCrawl()
-  asyncCheck thepiratebay.startCrawl()
-  asyncCheck rarbg.startCrawl()
+  var dict = loadConfig("config.ini")
+  
+  if dict.getSectionValue("Crawlers","eztv")=="on":
+    asyncCheck eztv.startCrawl()
+  if dict.getSectionValue("Crawlers","leetx")=="on":
+    asyncCheck leetx.startCrawl()
+  if dict.getSectionValue("Crawlers","nyaa")=="on":
+    asyncCheck nyaa.startCrawl()
+  if dict.getSectionValue("Crawlers","nyaa_pantsu")=="on":
+    asyncCheck nyaa_pantsu.startCrawl()
+  if dict.getSectionValue("Crawlers","nyaa_sukebei")=="on":
+    asyncCheck nyaa_sukebei.startCrawl()
+  if dict.getSectionValue("Crawlers","yts")=="on":
+    asyncCheck yts.startCrawl()
+  if dict.getSectionValue("Crawlers","torrentdownloads")=="on":
+    asyncCheck torrentdownloads.startCrawl()
+  if dict.getSectionValue("Crawlers","thepiratebay")=="on":
+    asyncCheck thepiratebay.startCrawl()
+  if dict.getSectionValue("Crawlers","rarbg")=="on":
+    asyncCheck rarbg.startCrawl()
 
   let settings = newSettings(debug = false, port = Port(getEnv("TORRENTINIM_PORT", "50123").parseInt()))
   var app = newApp(settings = settings)
